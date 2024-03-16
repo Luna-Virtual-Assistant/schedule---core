@@ -26,9 +26,8 @@ jobs = {}
 
 
 def startConnection():
-    print("Starting connection")
     dataBase.connect()
-    schedules_data = dataBase.select_all_from_table("schedules")
+    schedules_data = dataBase.select_schedules_by_date("schedules")
     if schedules_data:
         for data in schedules_data:
             id, task, schedule_date, phone = data
@@ -38,17 +37,15 @@ def startConnection():
 def scheduleJob(id, date, task, phone):
     dateNow = datetime.now().astimezone(timezone("UTC"))
     date = datetime.strptime(str(date), "%Y-%m-%d %H:%M:%S.%f%z")
-    print(date >= dateNow)
     if date >= dateNow:
         difference = (date - dateNow).total_seconds()
         job = schedule.every(difference).seconds.do(
             executeJob, id, task, phone)
         jobs[id] = job
-        print("agendado", task, phone)
 
 
 def executeJob(id, task, phone):
-    print("Job executed", task,  phone)
+    # execute the task
     schedule.cancel_job(jobs[id])
     del jobs[id]
 

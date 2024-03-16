@@ -38,6 +38,15 @@ class DatabaseHandler:
         except (Exception, Error) as error:
             raise error
 
+    def select_schedules_by_date(self, table_name):
+        try:
+            self.cursor.execute(
+                f"SELECT * FROM {table_name} WHERE schedule_date > CURRENT_DATE")
+            records = self.cursor.fetchall()
+            return records
+        except (Exception, Error) as error:
+            raise error
+
     def update_row(self, table_name, column_to_update, new_value, condition_column, condition_value):
         try:
             self.cursor.execute(f"UPDATE {table_name} SET {column_to_update} = %s WHERE {

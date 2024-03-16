@@ -39,12 +39,30 @@ schedule_thread = threading.Thread(target=schedule_pending_jobs)
 schedule_thread.start()
 
 
-@app.route('/all-schedules', methods=['GET'])
-def hello_world():
-    records = dataBase.select_all_from_table("schedules")
-    formatted_records = [{'id': record[0], 'text': record[1],
-                          'schedule_date': record[2], 'phone': record[3]} for record in records]
-    return jsonify(formatted_records)
+@app.route('/', methods=['GET'])
+def get_all_schedules():
+    try:
+        records = dataBase.select_all_from_table("schedules")
+        formatted_records = [{'id': record[0], 'text': record[1],
+                              'schedule_date': record[2], 'phone': record[3]} for record in records]
+        if len(formatted_records) <= 0:
+            return jsonify({"message": "No schedules found"}), 404
+        return jsonify({"count": len(formatted_records), "schedules": formatted_records})
+    except Exception as e:
+        return jsonify({"error": f"Internal server error {e}"}), 500
+
+
+@app.route('/all-schedules-valid', methods=['GET'])
+def get_schedules_valid():
+    try:
+        records = dataBase.select_schedules_by_date("schedules")
+        formatted_records = [{'id': record[0], 'text': record[1],
+                              'schedule_date': record[2], 'phone': record[3]} for record in records]
+        if len(formatted_records) <= 0:
+            return jsonify({"message": "No schedules found"}), 404
+        return jsonify({"count": len(formatted_records), "schedules": formatted_records})
+    except Exception as e:
+        return jsonify({"error": f"Internal server error {e}"}), 500
 
 
 @app.route('/create-schedule', methods=['POST'])
