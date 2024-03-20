@@ -16,6 +16,7 @@ BD_PASSWORD = os.getenv("BD_PASSWORD")
 BD_HOST = os.getenv("BD_HOST")
 BD_PORT = os.getenv("BD_PORT")
 BD_NAME = os.getenv("BD_NAME")
+TOKEN = os.getenv("TOKEN")
 
 dataBase = DatabaseHandler(
     user=BD_USER,
@@ -38,6 +39,19 @@ def schedule_pending_jobs():
 schedule_thread = threading.Thread(target=schedule_pending_jobs)
 schedule_thread.start()
 
+
+def get_token():
+    token = request.args.get('token')
+    if not token:
+        return jsonify({'error': 'Unauthorized'}), 401
+    if token != TOKEN:
+        return jsonify({'error': 'Forbidden'}), 403
+
+@app.before_request
+def before_request_handler():
+    response = get_token()
+    if response is not None:
+        return response
 
 @app.route('/', methods=['GET'])
 def get_all_schedules():
@@ -102,4 +116,4 @@ def delete_schedule(schedule_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)

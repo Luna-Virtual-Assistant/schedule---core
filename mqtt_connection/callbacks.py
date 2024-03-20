@@ -23,4 +23,5 @@ def on_subscribe(client, userdata, mid, granted_qos):
 
 
 def on_message(client, userdata, message):
-    pass
+    print(f"[{datetime.now().strftime('%Y-%m-%d - %H:%M:%S')}] Received a message on topic {message.topic}")
+    publish(message)
