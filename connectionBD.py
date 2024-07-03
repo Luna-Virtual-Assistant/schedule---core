@@ -49,8 +49,7 @@ class DatabaseHandler:
 
     def update_row(self, table_name, column_to_update, new_value, condition_column, condition_value):
         try:
-            self.cursor.execute(f"UPDATE {table_name} SET {column_to_update} = %s WHERE {
-                                condition_column} = %s", (new_value, condition_value))
+            self.cursor.execute(f"UPDATE {table_name} SET {column_to_update} = %s WHERE {condition_column} = %s", (new_value, condition_value))
             self.connection.commit()
 
         except (Exception, Error) as error:
@@ -58,8 +57,7 @@ class DatabaseHandler:
 
     def delete_row(self, table_name, condition_column, condition_value):
         try:
-            self.cursor.execute(f"DELETE FROM {table_name} WHERE {
-                                condition_column} = %s", (condition_value,))
+            self.cursor.execute(f"DELETE FROM {table_name} WHERE {condition_column} = %s", (condition_value,))
             self.connection.commit()
 
         except (Exception, Error) as error:
@@ -67,6 +65,7 @@ class DatabaseHandler:
 
     def insert_row(self, table_name, values):
         try:
+            self.cursor.execute("SET TIMEZONE TO 'UTC';")
             self.cursor.execute(
                 f"INSERT INTO {table_name} (text, schedule_date, phone) VALUES (%s, %s, %s) RETURNING id", values)
             inserted_row = self.cursor.fetchone()[0]

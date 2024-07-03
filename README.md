@@ -3,11 +3,11 @@
 Para armazenar os agendamentos no banco de dados, você pode criar a seguinte tabela SQL:
 ---
 ```sql
-CREATE TABLE schedules (
-    id SERIAL PRIMARY KEY,
-    text VARCHAR(200),
-    schedule_date TIMESTAMP WITH TIME ZONE,
-    phone VARCHAR(20)
+create table schedules (
+	id SERIAL PRIMARY KEY,
+	text varchar(200),
+	schedule_date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+	phone varchar(20)
 );
 ```
 ### Configurando o Ambiente

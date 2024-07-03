@@ -1,10 +1,10 @@
 import os
 import schedule
 from connectionBD import DatabaseHandler
-from datetime import datetime, timedelta
+from datetime import datetime
 from dotenv import load_dotenv
 from pytz import timezone
-import time
+from mqtt_publisher.publisher import publish
 
 load_dotenv(override=True)
 
@@ -31,12 +31,12 @@ def startConnection():
     if schedules_data:
         for data in schedules_data:
             id, task, schedule_date, phone = data
-            scheduleJob(id, schedule_date, task, phone)
+            scheduleJob(id, str(schedule_date), task, phone)
 
 
 def scheduleJob(id, date, task, phone):
     dateNow = datetime.now().astimezone(timezone("UTC"))
-    date = datetime.strptime(str(date), "%Y-%m-%d %H:%M:%S.%f%z")
+    date = datetime.fromisoformat(date)
     if date >= dateNow:
         difference = (date - dateNow).total_seconds()
         job = schedule.every(difference).seconds.do(
@@ -45,7 +45,8 @@ def scheduleJob(id, date, task, phone):
 
 
 def executeJob(id, task, phone):
-    # execute the task
+    publish(task)
+    print(f"Executing task: {task} for phone: {phone}")
     schedule.cancel_job(jobs[id])
     del jobs[id]
 
@@ -53,3 +54,4 @@ def executeJob(id, task, phone):
 def createJob(text: str, schedule_date: datetime, phone: str):
     id = dataBase.insert_row("schedules", (text, schedule_date, phone))
     scheduleJob(id, schedule_date, text, phone)
+    return id

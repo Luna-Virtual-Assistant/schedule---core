@@ -83,9 +83,7 @@ def get_schedules_valid():
 def create_schedule():
     data = request.json
     try:
-        new_id = dataBase.insert_row(
-            "schedules", (data['text'], data['schedule_date'], data['phone']))
-        createJob(data['text'], data['schedule_date'], data['phone'])
+        new_id = createJob(data['text'], data['schedule_date'], data['phone'])
         return jsonify({"id": new_id}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
