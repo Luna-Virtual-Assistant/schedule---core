@@ -41,7 +41,7 @@ class DatabaseHandler:
     def select_schedules_by_date(self, table_name):
         try:
             self.cursor.execute(
-                f"SELECT * FROM {table_name} WHERE schedule_date > CURRENT_DATE")
+                f"SELECT * FROM {table_name} WHERE schedule_date > CURRENT_TIMESTAMP")
             records = self.cursor.fetchall()
             return records
         except (Exception, Error) as error:
