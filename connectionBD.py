@@ -67,7 +67,7 @@ class DatabaseHandler:
         try:
             self.cursor.execute("SET TIMEZONE TO 'UTC';")
             self.cursor.execute(
-                f"INSERT INTO {table_name} (text, schedule_date, phone) VALUES (%s, %s, %s) RETURNING id", values)
+                f"INSERT INTO {table_name} (text, schedule_date, sessionName) VALUES (%s, %s, %s) RETURNING id", values)
             inserted_row = self.cursor.fetchone()[0]
             self.connection.commit()
             return inserted_row
