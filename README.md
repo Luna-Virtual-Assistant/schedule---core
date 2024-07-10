@@ -7,7 +7,7 @@ create table schedules (
 	id SERIAL PRIMARY KEY,
 	text varchar(200),
 	schedule_date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-	phone varchar(20)
+	sessionName varchar(20)
 );
 ```
 ### Configurando o Ambiente

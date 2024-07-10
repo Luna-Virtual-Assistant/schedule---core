@@ -37,13 +37,13 @@ startConnection()
 schedule_model = api.model('Schedule', {
     'text': fields.String(required=True, description='The schedule text'),
     'schedule_date': fields.String(required=True, description='The schedule date'),
-    'phone': fields.String(required=True, description='The phone number')
+    'sessionName': fields.String(required=True, description='The session name')
 })
 
 schedule_update_model = api.model('ScheduleUpdate', {
     'text': fields.String(required=True, description='The schedule text'),
     'schedule_date': fields.String(required=True, description='The schedule date'),
-    'phone': fields.String(required=True, description='The phone number')
+    'sessionName': fields.String(required=True, description='The session name')
 })
 
 def schedule_pending_jobs():
@@ -76,7 +76,7 @@ class ScheduleListCreate(Resource):
         try:
             records = dataBase.select_all_from_table("schedules")
             formatted_records = [{'id': record[0], 'text': record[1],
-                                  'schedule_date': record[2], 'phone': record[3]} for record in records]
+                                  'schedule_date': record[2], 'sessionName': record[3]} for record in records]
             if len(formatted_records) <= 0:
                 return make_response(jsonify({"message": "No schedules found"}), 404)
             return make_response(jsonify({"count": len(formatted_records), "schedules": formatted_records}), 200)
@@ -88,7 +88,7 @@ class ScheduleListCreate(Resource):
     def post(self):
         data = request.json
         try:
-            new_id = createJob(data['text'], data['schedule_date'], data['phone'])
+            new_id = createJob(data['text'], data['schedule_date'], data['sessionName'])
             return make_response(jsonify({"id": new_id}), 201)
         except Exception as e:
             print(e)
@@ -100,7 +100,7 @@ class ValidScheduleList(Resource):
         try:
             records = dataBase.select_schedules_by_date("schedules")
             formatted_records = [{'id': record[0], 'text': record[1],
-                                  'schedule_date': record[2], 'phone': record[3]} for record in records]
+                                  'schedule_date': record[2], 'sessionName': record[3]} for record in records]
             if len(formatted_records) <= 0:
                 return make_response(jsonify({"message": "No schedules found"}), 404)
             return make_response(jsonify({"count": len(formatted_records), "schedules": formatted_records}), 200)
@@ -117,7 +117,7 @@ class ScheduleUpdateDelete(Resource):
         try:
             dataBase.update_row("schedules", "text", data['text'], "id", schedule_id)
             dataBase.update_row("schedules", "schedule_date", data['schedule_date'], "id", schedule_id)
-            dataBase.update_row("schedules", "phone", data['phone'], "id", schedule_id)
+            dataBase.update_row("schedules", "sessionName", data['sessionName'], "id", schedule_id)
             return make_response(jsonify({"message": "Schedule updated successfully"}), 200)
         except Exception as e:
             return make_response(jsonify({"error": str(e)}), 500)
