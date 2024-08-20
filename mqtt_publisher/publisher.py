@@ -5,9 +5,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-mqtt_client = mqtt.Client(client_id=os.getenv("PUBLISHER_NAME"), protocol=mqtt.MQTTv311)
+
+mqtt_client = mqtt.Client(os.getenv("PUBLISHER_NAME"))
 mqtt_client.connect(host=os.getenv("HOST"), port=int(os.getenv("PORT")))
 
-def publish(text: str):
-    print(f"[{datetime.now().strftime('%Y-%m-%d - %H:%M:%S')}] publishing to {os.getenv('RES_TOPIC')}")
-    mqtt_client.publish(topic=os.getenv("RES_TOPIC"), payload=text)
+def publish(text: str) -> None:
+    topic = os.getenv("RES_TOPIC")
+    print(f"[{datetime.now().strftime('%Y-%m-%d - %H:%M:%S')}] publishing to {topic}")
+    mqtt_client.publish(topic=topic, payload=text)
