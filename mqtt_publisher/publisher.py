@@ -5,8 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
-mqtt_client = mqtt.Client(os.getenv("PUBLISHER_NAME"))
+mqtt_client = mqtt.Client(client_id=os.getenv("PUBLISHER_NAME"), protocol=mqtt.MQTTv311)
 mqtt_client.connect(host=os.getenv("HOST"), port=int(os.getenv("PORT")))
 
 def publish(text: str):

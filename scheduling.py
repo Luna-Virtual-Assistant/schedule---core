@@ -53,5 +53,5 @@ def executeJob(id, task, sessionName):
 
 def createJob(text: str, schedule_date: datetime, sessionName: str):
     id = dataBase.insert_row("schedules", (text, schedule_date, sessionName))
-    scheduleJob(id, schedule_date, text, sessionName)
+    scheduleJob(id, str(schedule_date), text, sessionName)
     return id
