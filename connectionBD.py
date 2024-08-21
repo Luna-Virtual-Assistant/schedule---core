@@ -73,3 +73,18 @@ class DatabaseHandler:
             return inserted_row
         except (Exception, Error) as error:
             raise error
+        
+    def create_table(self):
+        try:
+            self.connect()
+            self.cursor.execute("""
+                CREATE TABLE IF NOT EXISTS schedules (
+                    id serial primary key,
+                    text varchar(200),
+                    schedule_date timestamp with time zone default CURRENT_TIMESTAMP,
+                    sessionname varchar(20))
+                """)
+            self.connection.commit()
+            self.disconnect()
+        except (Exception, Error) as error:
+            raise error
