@@ -1,4 +1,6 @@
 import threading
+import pytz
+import datetime
 import os
 import time
 from flask import Flask, jsonify, request, Blueprint, make_response
@@ -87,6 +89,10 @@ class ScheduleListCreate(Resource):
     @api.doc(params={'token': 'Token for authentication'})
     def post(self):
         data = request.json
+        current_date = datetime.datetime.strptime(data['schedule_date'], '%Y-%m-%d %H:%M:%S.%f%z')
+        now_utc = datetime.datetime.now(datetime.timezone.utc)
+        if current_date < now_utc:
+            return make_response(jsonify({"error": "Invalid date"}), 400)    
         try:
             new_id = createJob(data['text'], data['schedule_date'], data['sessionName'])
             return make_response(jsonify({"id": new_id}), 201)
