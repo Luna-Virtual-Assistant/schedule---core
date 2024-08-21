@@ -23,7 +23,7 @@ dataBase = DatabaseHandler(
 )
 
 jobs = {}
-
+dataBase.create_table()
 
 def startConnection():
     dataBase.connect()
