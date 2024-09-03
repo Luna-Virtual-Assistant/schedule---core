@@ -46,12 +46,21 @@ class DatabaseHandler:
             return records
         except (Exception, Error) as error:
             raise error
-
-    def update_row(self, table_name, column_to_update, new_value, condition_column, condition_value):
+        
+    def select_schedule_by_id(self, schedule_id: int, table_name="schedules"):
         try:
-            self.cursor.execute(f"UPDATE {table_name} SET {column_to_update} = %s WHERE {condition_column} = %s", (new_value, condition_value))
-            self.connection.commit()
+            self.cursor.execute(f"SELECT * FROM {table_name} WHERE id = {schedule_id}")
+            record = self.cursor.fetchone()
+            return record
+        except (Exception, Error) as error:
+            raise error
 
+    def update_row(self, table_name, updates, condition_column, condition_value):
+        try:
+            set_clause = ", ".join([f"{column} = %s" for column in updates.keys()])
+            query = f"UPDATE {table_name} SET {set_clause} WHERE {condition_column} = %s"
+            self.cursor.execute(query, list(updates.values()) + [condition_value])
+            self.connection.commit()
         except (Exception, Error) as error:
             raise error
 

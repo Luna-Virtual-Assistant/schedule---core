@@ -8,7 +8,7 @@ from flask_restx import Api, Resource, fields
 from flask_cors import CORS
 from dotenv import load_dotenv
 from connectionBD import DatabaseHandler
-from scheduling import startConnection, createJob, schedule
+from scheduling import startConnection, createJob, updatejob, schedule
 
 load_dotenv(override=True)
 app = Flask(__name__)
@@ -121,12 +121,17 @@ class ScheduleUpdateDelete(Resource):
     def put(self, schedule_id):
         data = request.json
         try:
-            dataBase.update_row("schedules", "text", data['text'], "id", schedule_id)
-            dataBase.update_row("schedules", "schedule_date", data['schedule_date'], "id", schedule_id)
-            dataBase.update_row("schedules", "sessionName", data['sessionName'], "id", schedule_id)
+            updates = {
+                "text": data['text'],
+                "schedule_date": data['schedule_date'],
+                "sessionName": data['sessionName']
+            }
+            dataBase.update_row("schedules", updates, "id", schedule_id)
+            updatejob(schedule_id)
             return make_response(jsonify({"message": "Schedule updated successfully"}), 200)
         except Exception as e:
             return make_response(jsonify({"error": str(e)}), 500)
+
 
     @api.doc(params={'token': 'Token for authentication'})
     def delete(self, schedule_id):
