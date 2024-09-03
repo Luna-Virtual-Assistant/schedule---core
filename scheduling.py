@@ -55,3 +55,12 @@ def createJob(text: str, schedule_date: datetime, sessionName: str):
     id = dataBase.insert_row("schedules", (text, schedule_date, sessionName))
     scheduleJob(id, str(schedule_date), text, sessionName)
     return id
+
+def updatejob(schedule_id: int):
+    schedule = dataBase.select_schedule_by_id(schedule_id, "schedules")
+    if schedule:
+        id, task, schedule_date, sessionName = schedule
+        if id in jobs:
+            schedule.cancel_job(jobs[id])
+            del jobs[id]
+        scheduleJob(id, str(schedule_date), task, sessionName)
