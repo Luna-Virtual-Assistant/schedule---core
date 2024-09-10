@@ -9,6 +9,8 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 from connectionBD import DatabaseHandler
 from scheduling import startConnection, createJob, updatejob, schedule
+from mqtt_connection.start import start
+
 
 load_dotenv(override=True)
 app = Flask(__name__)
@@ -53,8 +55,12 @@ def schedule_pending_jobs():
         schedule.run_pending()
         time.sleep(1)
 
-schedule_thread = threading.Thread(target=schedule_pending_jobs)
+schedule_thread = threading.Thread(target=schedule_pending_jobs, daemon=True)
+mqtt_client_thread = threading.Thread(target=start, daemon=True)
+
+
 schedule_thread.start()
+mqtt_client_thread.start()
 
 def get_token():
     token = request.args.get('token')
@@ -142,4 +148,4 @@ class ScheduleUpdateDelete(Resource):
             return make_response(jsonify({"error": str(e)}), 500)
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=False, host='0.0.0.0')
